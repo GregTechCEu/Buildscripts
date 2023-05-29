@@ -4,6 +4,8 @@
 
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
+import org.gradle.internal.logging.text.StyledTextOutput.Style
+import org.gradle.internal.logging.text.StyledTextOutputFactory
 import org.jetbrains.gradle.ext.Gradle
 
 plugins {
@@ -325,7 +327,7 @@ tasks.register('updateBuildScript') {
     }
 
     doLast {
-        if (performBuildscriptUpdate()) return
+        if (performBuildScriptUpdate()) return
         print('Build script already up to date!')
     }
 }
@@ -392,4 +394,8 @@ static String getVersionHash(String buildScriptContent) {
         return versionLine.split(": ").last()
     }
     return ""
+}
+
+def getFile(String relativePath) {
+    return new File(projectDir, relativePath)
 }
