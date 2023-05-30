@@ -418,7 +418,10 @@ processResources {
     // this will ensure that this task is redone when the versions change.
     inputs.property 'version', modVersion
     inputs.property 'mcversion', minecraftVersion
-    exclude('spotless.gradle')
+    // Blowdryer puts these files into the resource directory, so
+    // exclude them from builds (doesn't hurt to exclude even if not present)
+    exclude('spotless.importorder')
+    exclude('spotless.eclipseformat.xml')
 
     // replace stuff in mcmod.info, nothing else
     filesMatching(['mcmod.info', 'pack.mcmeta']) { fcd ->
