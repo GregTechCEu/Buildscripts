@@ -1,3 +1,5 @@
+//file:noinspection DependencyNotationArgument
+// TODO remove when fixed in RFG ^
 /*
  * Add your dependencies here. Common configurations:
  *  - implementation("group:name:version:classifier"): if you need this for internal implementation details of the mod.
