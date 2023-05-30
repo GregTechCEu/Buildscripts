@@ -541,6 +541,12 @@ idea {
                         taskNames = ["spotlessApply"]
                     }
                 }
+                'Update Buildscript'(Gradle) {
+                    taskNames = ['updateBuildScript']
+                }
+                'FAQ'(Gradle) {
+                    taskNames = ['faq']
+                }
             }
             compiler.javac {
                 afterEvaluate {
@@ -561,7 +567,7 @@ idea {
 
 final boolean isCIEnv = providers.environmentVariable('CI').getOrElse('false').toBoolean()
 def final changelogEnv = providers.environmentVariable('CHANGELOG_LOCATION')
-File changelogFile = new File(changelogEnv.isPresent() ? changelogEnv.get() : 'CHANGELOG.md')
+File changelogFile = new File(changelogEnv.getOrElse('CHANGELOG.md'))
 
 if (isCIEnv || deploymentDebug.toBoolean()) {
     artifacts {
@@ -583,7 +589,7 @@ if (cfApiKey.isPresent() || deploymentDebug.toBoolean()) {
         apiToken = cfApiKey.get()
         def projectIdVar = providers.environmentVariable('CURSEFORGE_PROJECT_ID')
 
-        def mainFile = upload(projectIdVar.isPresent() ? projectIdVar.get() : curseForgeProjectId, reobfJar)
+        def mainFile = upload(projectIdVar.getOrElse(curseForgeProjectId), reobfJar)
         def changelogRaw = changelogFile.exists() ? changelogFile.getText('UTF-8') : ""
 
         mainFile.releaseType = getReleaseType()
@@ -640,7 +646,7 @@ if (modrinthApiKey.isPresent() || deploymentDebug.toBoolean()) {
 
     modrinth {
         token = modrinthApiKey.get()
-        projectId = projectIdVar.isPresent() ? projectIdVar.get() : modrinthProjectId
+        projectId = projectIdVar.getOrElse(modrinthProjectId)
         changelog = changelogFile.exists() ? changelogFile.getText('UTF-8') : ""
         versionType = getReleaseType()
         versionNumber = modVersion
@@ -766,6 +772,22 @@ static String getVersionHash(String buildScriptContent) {
         return versionLine.split(": ").last()
     }
     return ""
+}
+
+
+// Faq
+
+tasks.register('faq') {
+    group = 'GT Buildscript'
+    description = 'Prints frequently asked questions about building a project'
+    doLast {
+        print("To update this buildscript to the latest version, run 'gradlew updateBuildScript' or run the generated run configuration if you are using IDEA.\n" +
+            "To add new dependencies to your project, place them in 'dependencies.gradle', NOT in 'build.gradle' as they would be replaced when the script updates.\n" +
+            "To add new repositories to your project, place them in 'repositories.gradle'.\n" +
+            "If you need additional gradle code to run, you can place it in a file named 'addon.gradle' (or either of the above, up to you for organization).\n" +
+            "If your build fails to recognize the syntax of newer Java versions, enable Jabel in your 'gradle.properties' under the option name 'enableModernJavaSyntax'.\n" +
+            "Report any issues or feature requests you have for this build script to https://github.com/GregTechCEu/Buildscripts")
+    }
 }
 
 
