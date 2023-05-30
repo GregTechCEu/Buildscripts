@@ -682,10 +682,9 @@ boolean performBuildScriptUpdate() {
         availableBuildScriptUrl().withInputStream { i -> buildscriptFile.withOutputStream { it << i } }
         def out = services.get(StyledTextOutputFactory).create('buildscript-update-output')
         out.style(Style.Success).print("Build script updated. Please REIMPORT the project or RESTART your IDE!")
-        boolean settingsupdated = verifySettingsGradle()
-        settingsupdated = verifyGitAttributes() || settingsupdated
-        if (settingsupdated)
+        if (verifySettingsGradle()) {
             throw new GradleException("Settings has been updated, please re-run task.")
+        }
         return true
     }
     return false
