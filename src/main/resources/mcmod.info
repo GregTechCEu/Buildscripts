@@ -1,0 +1,12 @@
+[{
+    "modid": "mymodid",
+    "name": "MyMod",
+    "description": "An example mod for Minecraft 1.12.2 with Forge",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "logoFile": "",
+    "url": "",
+    "authorList": [],
+    "credits": "",
+    "dependencies": []
+}]
