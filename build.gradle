@@ -18,9 +18,9 @@ plugins {
     id 'java'
     id 'java-library'
     id 'eclipse'
-    id 'scala'
     id 'org.jetbrains.gradle.plugin.idea-ext' version '1.1.7'
     id 'com.gtnewhorizons.retrofuturagradle' version '1.3.+'
+    id 'scala' apply false
     id 'net.darkhax.curseforgegradle' version '1.0.+' apply false
     id 'com.modrinth.minotaur' version '2.7.+' apply false
     id 'com.diffplug.spotless' version '6.13.0' apply false
@@ -132,6 +132,11 @@ if (coreModClass) {
 
 
 // Plugin application
+
+// Scala
+if (getFile(targetPackageScala).exists()) {
+    apply plugin: 'scala'
+}
 
 // Spotless
 //noinspection GroovyAssignabilityCheck
