@@ -18,6 +18,7 @@ plugins {
     id 'java'
     id 'java-library'
     id 'eclipse'
+    id 'scala'
     id 'org.jetbrains.gradle.plugin.idea-ext' version '1.1.7'
     id 'com.gtnewhorizons.retrofuturagradle' version '1.3.+'
     id 'net.darkhax.curseforgegradle' version '1.0.+' apply false
@@ -74,22 +75,25 @@ propertyDefaultIfUnsetWithEnvVar("deploymentDebug", false, "DEPLOYMENT_DEBUG")
 // Project property assertions
 
 final String javaSourceDir = 'src/main/java/'
-// If Scala or Kotlin are supported, add those paths here
+final String scalaSourceDir = 'src/main/scala/'
+// If Kotlin is supported, add the path here
 
 final String modGroupPath = modGroup.toString().replace('.' as char, '/' as char)
 final String apiPackagePath = apiPackage.toString().replace('.' as char, '/' as char)
 
 String targetPackageJava = javaSourceDir + modGroupPath
-// If Scala or Kotlin are supported, add those paths here
+String targetPackageScala = scalaSourceDir + modGroupPath
+// If Kotlin is supported, add the path here
 
-if (!getFile(targetPackageJava).exists()) {
-    throw new GradleException("Could not resolve \"modGroup\"! Could not find " + targetPackageJava)
+if (!getFile(targetPackageJava).exists() && !getFile(targetPackageScala).exists()) {
+    throw new GradleException("Could not resolve \"modGroup\"! Could not find ${targetPackageJava} or ${targetPackageScala}")
 }
 
 if (apiPackage) {
     targetPackageJava = javaSourceDir + modGroupPath + '/' + apiPackagePath
-    if (!getFile(targetPackageJava).exists()) {
-        throw new GradleException("Could not resolve \"apiPackage\"! Could not find " + targetPackageJava)
+    targetPackageScala = scalaSourceDir + modGroupPath + '/' + apiPackagePath
+    if (!getFile(targetPackageJava).exists() && !getFile(targetPackageScala).exists()) {
+        throw new GradleException("Could not resolve \"apiPackage\"! Could not find ${targetPackageJava} or ${targetPackageScala}")
     }
 }
 
@@ -110,15 +114,18 @@ if (usesMixins.toBoolean()) {
     }
     final String mixinPackagePath = mixinsPackage.toString().replaceAll('\\.', '/')
     targetPackageJava = javaSourceDir + modGroupPath + '/' + mixinPackagePath
+    targetPackageScala = scalaSourceDir + modGroupPath + '/' + mixinPackagePath
     if (!getFile(targetPackageJava).exists()) {
-        throw new GradleException("Could not resolve \"mixinsPackage\"! Could not find " + targetPackageJava)
+        throw new GradleException("Could not resolve \"mixinsPackage\"! Could not find ${targetPackageJava} or ${targetPackageScala}")
     }
 }
 
 if (coreModClass) {
     final String coreModPath = coreModClass.toString().replaceAll('\\.', '/')
     String targetFileJava = javaSourceDir + modGroupPath + '/' + coreModPath + '.java'
-    if (!getFile(targetFileJava).exists()) {
+    String targetFileScala = scalaSourceDir + modGroupPath + '/' + coreModPath + '.scala'
+    String targetFileScalaJava = scalaSourceDir + modGroupPath + '/' + coreModPath + '.java'
+    if (!getFile(targetFileJava).exists() && !getFile(targetFileScala).exists() && !getFile(targetFileScalaJava).exists()) {
         throw new GradleException("Could not resolve \"coreModClass\"! Could not find " + targetFileJava)
     }
 }
@@ -164,6 +171,10 @@ if (enableSpotless.toBoolean()) {
             //noinspection GroovyAssignabilityCheck
             eclipse('4.19.0').configFile(formatFile)
         }
+        scala {
+            target 'src/*/scala/**/*.scala'
+            scalafmt('3.7.1')
+        }
     }
 }
 
@@ -206,6 +217,10 @@ tasks.withType(JavaCompile).configureEach {
             vendor.set(JvmVendorSpec.AZUL)
         })
     }
+}
+
+tasks.withType(ScalaCompile).configureEach {
+    options.encoding = 'UTF-8'
 }
 
 
