@@ -57,6 +57,7 @@ propertyDefaultIfUnset("gradleTokenModId", "")
 propertyDefaultIfUnset("gradleTokenModName", "")
 propertyDefaultIfUnset("gradleTokenVersion", "")
 propertyDefaultIfUnset("includeWellKnownRepositories", true)
+propertyDefaultIfUnset("includeCommonDevEnvMods", true)
 propertyDefaultIfUnset("noPublishedSources", false)
 propertyDefaultIfUnset("forceEnableMixins", false)
 propertyDefaultIfUnset("modrinthProjectId", "")
@@ -277,7 +278,7 @@ if (getFile('repositories.gradle').exists()) {
 }
 
 repositories {
-    if (includeWellKnownRepositories.toBoolean()) {
+    if (includeWellKnownRepositories.toBoolean() || includeCommonDevEnvMods.toBoolean()) {
         exclusiveContent {
             forRepository {
                 //noinspection ForeignDelegate
@@ -378,6 +379,12 @@ dependencies {
 
     compileOnlyApi 'org.jetbrains:annotations:23.0.0'
     annotationProcessor 'org.jetbrains:annotations:23.0.0'
+
+    if (includeCommonDevEnvMods.toBoolean()) {
+        implementation 'mezz.jei:jei_1.12.2:4.16.1.302'
+        //noinspection DependencyNotationArgument
+        implementation rfg.deobf('curse.maven:top-245211:2667280') // TOP 1.4.28
+    }
 }
 
 if (getFile('dependencies.gradle').exists()) {
