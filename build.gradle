@@ -134,7 +134,7 @@ if (coreModClass) {
 // Plugin application
 
 // Scala
-if (getFile(targetPackageScala).exists()) {
+if (getFile('src/main/scala').exists()) {
     apply plugin: 'scala'
 }
 
