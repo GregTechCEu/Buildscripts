@@ -452,11 +452,12 @@ processResources {
     exclude('spotless.eclipseformat.xml')
 
     // replace stuff in mcmod.info, nothing else
-    filesMatching(['mcmod.info', 'pack.mcmeta']) { fcd ->
-        // replace version and mcversion
+    filesMatching('mcmod.info') { fcd ->
         fcd.expand(
                 'version': modVersion,
-                'mcversion': minecraftVersion
+                'mcversion': minecraftVersion,
+                'modid': modId,
+                'modname': modName
         )
     }
 }
@@ -464,16 +465,46 @@ processResources {
 // Automatically generate a mixin json file if it does not already exist
 tasks.register('generateAssets') {
     group = 'GT Buildscript'
-    description = 'Generates a mixin config file at /src/main/resources/mixins.modid.json if needed'
-    onlyIf {
-        usesMixins.toBoolean()
-    }
+    description = 'Generates a pack.mcmeta, mcmod.info, or mixins.{modid}.json if needed'
     doLast {
-        def mixinConfigFile = getFile("src/main/resources/mixins.${modId}.json")
-        if (!mixinConfigFile.exists()) {
-            def mixinConfigRefmap = "mixins.${modId}.refmap.json"
+        // pack.mcmeta
+        def packMcmetaFile = getFile('src/main/resources/pack.mcmeta')
+        if (!packMcmetaFile.exists()) {
+            packMcmetaFile.text = """{
+  "pack": {
+    "pack_format": 3,
+    "description": "${modName} Resource Pack"
+  }
+}
+"""
+        }
 
-            mixinConfigFile.text = """{
+        // mcmod.info
+        def mcmodInfoFile = getFile('src/main/resources/mcmod.info')
+        if (!mcmodInfoFile.exists()) {
+            mcmodInfoFile.text = """[{
+    "modid": "\${modid}",
+    "name": "\${modname}",
+    "description": "An example mod for Minecraft 1.12.2 with Forge",
+    "version": "\${version}",
+    "mcversion": "\${mcversion}",
+    "logoFile": "",
+    "url": "",
+    "authorList": [],
+    "credits": "",
+    "dependencies": []
+}]
+"""
+            mcmodInfoFile
+        }
+
+        // mixins.{modid}.json
+        if (usesMixins.toBoolean()) {
+            def mixinConfigFile = getFile("src/main/resources/mixins.${modId}.json")
+            if (!mixinConfigFile.exists()) {
+                def mixinConfigRefmap = "mixins.${modId}.refmap.json"
+
+                mixinConfigFile.text = """{
   "package": "${modGroup}.${mixinsPackage}",
   "refmap": "${mixinConfigRefmap}",
   "target": "@env(DEFAULT)",
@@ -484,6 +515,7 @@ tasks.register('generateAssets') {
   "server": []
 }
 """
+            }
         }
     }
 }

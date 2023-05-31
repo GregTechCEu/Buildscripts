@@ -1,6 +1,6 @@
 [{
-    "modid": "mymodid",
-    "name": "MyMod",
+    "modid": "${modid}",
+    "name": "${modname}",
     "description": "An example mod for Minecraft 1.12.2 with Forge",
     "version": "${version}",
     "mcversion": "${mcversion}",
