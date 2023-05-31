@@ -773,12 +773,14 @@ tasks.register('faq') {
     group = 'GT Buildscript'
     description = 'Prints frequently asked questions about building a project'
     doLast {
-        print("To update this buildscript to the latest version, run 'gradlew updateBuildScript' or run the generated run configuration if you are using IDEA.\n" +
-            "To add new dependencies to your project, place them in 'dependencies.gradle', NOT in 'build.gradle' as they would be replaced when the script updates.\n" +
-            "To add new repositories to your project, place them in 'repositories.gradle'.\n" +
-            "If you need additional gradle code to run, you can place it in a file named 'addon.gradle' (or either of the above, up to you for organization).\n" +
-            "If your build fails to recognize the syntax of newer Java versions, enable Jabel in your 'gradle.properties' under the option name 'enableModernJavaSyntax'.\n" +
-            "Report any issues or feature requests you have for this build script to https://github.com/GregTechCEu/Buildscripts")
+        print("\nTo update this buildscript to the latest version, run 'gradlew updateBuildScript' or run the generated run configuration if you are using IDEA.\n" +
+                "To set up the project, run the 'setupDecompWorkspace' task, which you can run as './gradlew setupDecompWorkspace' in a terminal, or find in the 'modded minecraft' gradle category.\n\n" +
+                "To add new dependencies to your project, place them in 'dependencies.gradle', NOT in 'build.gradle' as they would be replaced when the script updates.\n" +
+                "To add new repositories to your project, place them in 'repositories.gradle'.\n" +
+                "If you need additional gradle code to run, you can place it in a file named 'addon.gradle' (or either of the above, up to you for organization).\n\n" +
+                "If your build fails to recognize the syntax of newer Java versions, enable Jabel in your 'gradle.properties' under the option name 'enableModernJavaSyntax'.\n" +
+                "To see information on how to configure your IDE properly for Java 17, see https://github.com/GregTechCEu/Buildscripts/blob/master/jabel.md\n\n" +
+                "Report any issues or feature requests you have for this build script to https://github.com/GregTechCEu/Buildscripts/issues\n")
     }
 }
 
