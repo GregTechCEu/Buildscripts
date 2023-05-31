@@ -25,3 +25,8 @@ In IDEA, open the Settings panel (can be opened with `Ctrl + Alt + S`) and navig
 If you now try to use a Java 9+ API, you should see it as an error in your IDE. For example, `List.of()`:
 
 ![image](https://github.com/GregTechCEu/Buildscripts/assets/10861407/92a384e9-cf7c-415c-b3c5-2391f0cba869)
+
+However, using a language feature, like `enhanced instanceof`, works just fine:
+
+![image](https://github.com/GregTechCEu/Buildscripts/assets/10861407/f232d4a2-3d5f-4899-aaa9-7ea6e2fe0764)
+
