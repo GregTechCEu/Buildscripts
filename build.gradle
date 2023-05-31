@@ -5,6 +5,8 @@
  * Please check https://github.com/GregTechCEu/Buildscripts/blob/master/build.gradle for updates.
  */
 
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import com.gtnewhorizons.retrofuturagradle.mcp.ReobfuscatedJar
 import com.modrinth.minotaur.dependencies.ModDependency
 import com.modrinth.minotaur.dependencies.VersionDependency
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
@@ -25,6 +27,7 @@ plugins {
     id 'com.modrinth.minotaur' version '2.7.+' apply false
     id 'com.diffplug.spotless' version '6.13.0' apply false
     id 'com.palantir.git-version' version '3.0.0' apply false
+    id 'com.github.johnrengelman.shadow' version '8.1.1' apply false
 }
 
 if (verifySettingsGradle()) {
@@ -61,6 +64,9 @@ propertyDefaultIfUnset("includeWellKnownRepositories", true)
 propertyDefaultIfUnset("includeCommonDevEnvMods", true)
 propertyDefaultIfUnset("noPublishedSources", false)
 propertyDefaultIfUnset("forceEnableMixins", false)
+propertyDefaultIfUnset("usesShadowedDependencies", false)
+propertyDefaultIfUnset("minimizeShadowedDependencies", true)
+propertyDefaultIfUnset("relocateShadowedDependencies", true)
 propertyDefaultIfUnset("modrinthProjectId", "")
 propertyDefaultIfUnset("modrinthRelations", "")
 propertyDefaultIfUnset("curseForgeProjectId", "")
@@ -187,6 +193,11 @@ if (enableSpotless.toBoolean()) {
 // Git submodules
 if (project.file('.git/HEAD').isFile() || project.file('.git').isFile()) {
     apply plugin: 'com.palantir.git-version'
+}
+
+// Shadowing
+if (usesShadowedDependencies.toBoolean()) {
+    apply plugin: 'com.github.johnrengelman.shadow'
 }
 
 
@@ -356,6 +367,13 @@ repositories {
 configurations {
     embed
     implementation.extendsFrom(embed)
+
+    if (usesShadowedDependencies.toBoolean()) {
+        for (config in [compileClasspath, runtimeClasspath, testCompileClasspath, testRuntimeClasspath]) {
+            config.extendsFrom(shadowImplementation)
+            config.extendsFrom(shadowCompile)
+        }
+    }
 }
 
 dependencies {
@@ -534,21 +552,7 @@ if (usesMixins.toBoolean()) {
 
 jar {
     manifest {
-        def attribute_map = [:]
-        if (coreModClass) {
-            attribute_map['FMLCorePlugin'] = "${modGroup}.${coreModClass}"
-        }
-        if (!containsMixinsAndOrCoreModOnly.toBoolean() && (usesMixins.toBoolean() || coreModClass)) {
-            attribute_map['FMLCorePluginContainsFMLMod'] = true
-        }
-        if (accessTransformersFile) {
-            attribute_map['FMLAT'] = accessTransformersFile.toString()
-        }
-
-        if (usesMixins.toBoolean()) {
-            attribute_map['ForceLoadAsMod'] = !containsMixinsAndOrCoreModOnly.toBoolean()
-        }
-        attributes(attribute_map)
+        attributes(getManifestAttributes())
     }
 
     // Add all embedded dependencies into the jar
@@ -569,6 +573,66 @@ tasks.register('apiJar', Jar) {
     from(sourceSets.main.output) {
         include "${modGroupPath}/${apiPackagePath}/**"
     }
+}
+
+// Configure shadow jar task
+if (usesShadowedDependencies.toBoolean()) {
+    tasks.named('shadowJar', ShadowJar).configure {
+        manifest {
+            attributes(getManifestAttributes())
+        }
+        // Only shadow classes that are actually used, if enabled
+        if (minimizeShadowedDependencies.toBoolean()) {
+            minimize()
+        }
+        configurations = [
+                project.configurations.shadowImplementation,
+                project.configurations.shadowCompile
+        ]
+        archiveClassifier.set('dev')
+        if (relocateShadowedDependencies.toBoolean()) {
+            relocationPrefix = modGroup + '.shadow'
+            enableRelocation = true
+        }
+    }
+    configurations.runtimeElements.outgoing.artifacts.clear()
+    configurations.apiElements.outgoing.artifacts.clear()
+    configurations.runtimeElements.outgoing.artifact(tasks.named('shadowJar', ShadowJar))
+    configurations.apiElements.outgoing.artifact(tasks.named('shadowJar', ShadowJar))
+    tasks.named('jar', Jar) {
+        enabled = false
+        finalizedBy(tasks.shadowJar)
+    }
+    tasks.named('reobfJar', ReobfuscatedJar) {
+        inputJar.set(tasks.named('shadowJar', ShadowJar).flatMap({it.archiveFile}))
+    }
+    AdhocComponentWithVariants javaComponent = (AdhocComponentWithVariants) project.components.findByName('java')
+    javaComponent.withVariantsFromConfiguration(configurations.shadowRuntimeElements) {
+        skip()
+    }
+    for (runTask in ['runClient', 'runServer']) {
+        tasks.named(runTask).configure {
+            dependsOn('shadowJar')
+        }
+    }
+}
+
+def getManifestAttributes() {
+    def attributes = [:]
+    if (coreModClass) {
+        attributes['FMLCorePlugin'] = "${modGroup}.${coreModClass}"
+    }
+    if (!containsMixinsAndOrCoreModOnly.toBoolean() && (usesMixins.toBoolean() || coreModClass)) {
+        attributes['FMLCorePluginContainsFMLMod'] = true
+    }
+    if (accessTransformersFile) {
+        attributes['FMLAT'] = accessTransformersFile.toString()
+    }
+
+    if (usesMixins.toBoolean()) {
+        attributes['ForceLoadAsMod'] = !containsMixinsAndOrCoreModOnly.toBoolean()
+    }
+    return attributes
 }
 
 
@@ -705,7 +769,7 @@ if (modrinthApiKey.isPresent() || deploymentDebug.toBoolean()) {
         gameVersions = [minecraftVersion]
         loaders = ["forge"]
         debugMode = deploymentDebug.toBoolean()
-        uploadFile = file("build/libs/${archivesBaseName}-${version}.jar")
+        uploadFile = reobfJar
         additionalFiles = getSecondaryArtifacts()
     }
     if (modrinthRelations.size() != 0) {
@@ -906,7 +970,7 @@ def propertyDefaultIfUnsetWithEnvVar(String propertyName, defaultValue, String e
 }
 
 def getSecondaryArtifacts() {
-    def secondaryArtifacts = [jar]
+    def secondaryArtifacts = [usesShadowedDependencies.toBoolean() ? tasks.shadowJar : tasks.jar]
     if (!noPublishedSources.toBoolean()) secondaryArtifacts += [sourcesJar]
     if (apiPackage) secondaryArtifacts += [apiJar]
     return secondaryArtifacts
