@@ -375,6 +375,9 @@ dependencies {
         }
         testCompileOnly "me.eigenraven.java8unsupported:java-8-unsupported-shim:1.0.0"
     }
+
+    compileOnlyApi 'org.jetbrains:annotations:23.0.0'
+    annotationProcessor 'org.jetbrains:annotations:23.0.0'
 }
 
 if (getFile('dependencies.gradle').exists()) {
