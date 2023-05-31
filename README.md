@@ -13,6 +13,7 @@ This build script was heavily inspired by the build script created by GT New Hor
 - Core Mods
 - Mixin, or specifying Mixin as a dependency if you do not use it, but projects you depend on do
 - Automatic repository settings, including common repositories such as CurseMaven, Modrinth Maven, and others
+- Automatically include JEI and The One Probe in your project, at both compile-time and runtime
 - CurseForge and Modrinth deployments
 - Jabel for Java 17 language features while still targeting Java 8
 - JUnit 5 added automatically
@@ -20,8 +21,12 @@ This build script was heavily inspired by the build script created by GT New Hor
 - API and Source deployment along side obf and deobf jars
 - Deployment testing options, so that you can ensure your tokens and other variables are set up properly
 - Custom username setting for development, that can be set either project-wide or via an environment variable for shared projects
+- Ships with Jetbrains annotations by default, so you have another option over `javax`
+- Scala support
+- Custom Maven publishing location support, with all secrets held by system environment variables
+- Automatic mixin JSON generation, as well as mcmod.info and pack.mcmeta if they are missing
 
-And many more to come!
+And many more to come! And of course, all of these features are toggleable via an option in `gradle.properties`.
 
 ## How to Install (New Project)
 Coming soon!
