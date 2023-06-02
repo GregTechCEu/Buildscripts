@@ -29,10 +29,16 @@ This build script was heavily inspired by the build script created by GT New Hor
 And many more to come! And of course, all of these features are toggleable via an option in `gradle.properties`.
 
 ## How to Install (New Project)
-Coming soon!
+- Download the latest **starter.zip** release from [here](https://github.com/GregTechCEu/Buildscripts/releases) and extract into your project directory
+- Import into your IDE (we recommend IntelliJ IDEA, as it has the best support for modded Minecraft)
+- Choose a license for your code
+- Ensure your project is initialized in git. For example, you can run `git init; git commit --message "initial commit"`
+- Replace placeholder values, such as `gradle.properties`, package/class names for your `src/main` directory, etc.
+- Run `./gradlew setupDecompWorkspace`
+- You are good to go! You can now run the `runClient` run configuration or run `./gradlew runClient` to launch the game
 
 ## How to Install (Existing Project)
-- Download the latest master as a zip file from [here](https://github.com/GregTechCEu/Buildscripts/archive/refs/heads/master.zip)
+- Download the latest **migration.zip** release from [here](https://github.com/GregTechCEu/Buildscripts/releases)
 - Rename your `build.gradle` file to `build.gradle.old`
 - Copy the [`build.gradle`](https://github.com/GregTechCEu/Buildscripts/blob/master/build.gradle), [`dependencies.gradle`](https://github.com/GregTechCEu/Buildscripts/blob/master/dependencies.gradle), and [`repositories.gradle`](https://github.com/GregTechCEu/Buildscripts/blob/master/repositories.gradle) files from this zip to your project
 - Copy the [`settings.gradle`](https://github.com/GregTechCEu/Buildscripts/blob/master/settings.gradle) file from this zip to your project and replace your current one
