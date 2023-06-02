@@ -484,6 +484,8 @@ processResources {
                 'modname': modName
         )
     }
+
+    rename '(.+_at.cfg)', 'META-INF/$1'
 }
 
 // Automatically generate a mixin json file if it does not already exist
