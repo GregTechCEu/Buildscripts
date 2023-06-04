@@ -18,13 +18,15 @@ This build script was heavily inspired by the build script created by GT New Hor
 - Jabel for Java 17 language features while still targeting Java 8
 - JUnit 5 added automatically
 - Spotless auto-formatting with default formatter configurations, or user-specified configurations
-- API and Source deployment along side obf and deobf jars
+- API and Source deployment alongside obf and deobf jars
 - Deployment testing options, so that you can ensure your tokens and other variables are set up properly
 - Custom username setting for development, that can be set either project-wide or via an environment variable for shared projects
 - Ships with Jetbrains annotations by default, so you have another option over `javax`
 - Scala support
 - Custom Maven publishing location support, with all secrets held by system environment variables
 - Automatic mixin JSON generation, as well as mcmod.info and pack.mcmeta if they are missing
+- Dependency shadowing for releasing dependencies in your builds, more info [here](https://github.com/GregTechCEu/Buildscripts/blob/master/docs/shadow.md)
+- Automatic changelog generation by generating a list of all commits between the current tag and the previous tag
 
 And many more to come! And of course, all of these features are toggleable via an option in `gradle.properties`.
 
@@ -35,6 +37,7 @@ And many more to come! And of course, all of these features are toggleable via a
 - Ensure your project is initialized in git. For example, you can run `git init; git commit --message "initial commit"`
 - Replace placeholder values, such as `gradle.properties`, package/class names for your `src/main` directory, etc.
 - Run `./gradlew setupDecompWorkspace`
+- Run `./gradlew updateBuildScript` to ensure that you are on the latest version
 - You are good to go! You can now run the `runClient` run configuration or run `./gradlew runClient` to launch the game
 
 ## How to Install (Existing Project)
@@ -54,6 +57,7 @@ And many more to come! And of course, all of these features are toggleable via a
       1. JEI
       2. The One Probe
 - Delete the `build.gradle.old` file
+- And lastly, run `./gradlew updateBuildScript` to ensure that you are on the latest version
 
 ### Advanced
 - If your project was using Mixins, you may get a new mixin config file generated as `mixins.{modid}.json`, if yours was not named this way. Currently, you will have to move your Mixin config options to this newly generated file. If this behavior does not suit your needs, feel free to open an issue and start a discussion on different behavior
