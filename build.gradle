@@ -750,6 +750,7 @@ if (cfApiKey.isPresent() || deploymentDebug.toBoolean()) {
         def changelogFile = getChangelog()
         def changelogRaw = changelogFile.exists() ? changelogFile.getText('UTF-8') : ""
 
+        mainFile.displayName = "${modName}: ${modVersion}"
         mainFile.releaseType = getReleaseType()
         mainFile.changelog = changelogRaw
         mainFile.changelogType = 'markdown'
