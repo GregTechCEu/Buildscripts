@@ -737,7 +737,7 @@ if (cfApiKey.isPresent() || deploymentDebug.toBoolean()) {
                 if (dep.size() == 0) {
                     return
                 }
-                String parts = dep.split(':')
+                String[] parts = dep.split(':')
                 String type = parts[0], slug = parts[1]
                 if(!(type in ['requiredDependency', 'embeddedLibrary', 'optionalDependency', 'tool', 'incompatible'])) {
                     throw new Exception('Invalid Curseforge dependency type: ' + type)
@@ -781,7 +781,7 @@ if (modrinthApiKey.isPresent() || deploymentDebug.toBoolean()) {
                 return
             }
             String[] parts = dep.split(':')
-            String qual = parts[0].split('-')
+            String[] qual = parts[0].split('-')
             addModrinthDep(qual[0], qual[1], parts[1])
         }
     }
