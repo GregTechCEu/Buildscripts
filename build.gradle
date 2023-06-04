@@ -43,7 +43,6 @@ def out = services.get(StyledTextOutputFactory).create('an-output')
 checkPropertyExists("modName")
 checkPropertyExists("modId")
 checkPropertyExists("modGroup")
-checkPropertyExists("modVersion")
 checkPropertyExists("minecraftVersion") // hard-coding this makes it harder to immediately tell what version a mod is in (even though this only really supports 1.12.2)
 checkPropertyExists("apiPackage")
 checkPropertyExists("accessTransformersFile")
@@ -53,6 +52,7 @@ checkPropertyExists("coreModClass")
 checkPropertyExists("containsMixinsAndOrCoreModOnly")
 
 // Optional properties: we can assume some default behavior if these are missing
+propertyDefaultIfUnset("modVersion", "")
 propertyDefaultIfUnset("autoUpdateBuildScript", false)
 propertyDefaultIfUnset("modArchivesBaseName", project.modId)
 propertyDefaultIfUnsetWithEnvVar("developmentEnvironmentUserName", "Developer", "DEV_USERNAME")
@@ -243,6 +243,19 @@ tasks.withType(ScalaCompile).configureEach {
 
 
 // Configure Minecraft
+
+// Try to gather mod version from git tags if version is not manually specified
+if (!modVersion) {
+    try {
+        modVersion = gitVersion()
+    } catch (Exception ignored) {
+        out.style(Style.Failure).text(
+                "Mod version could not be determined! Property 'modVersion' is not set, and either git is not installed or no git tags exist.\n" +
+                        "Either specify a mod version in 'gradle.properties', or create at least one tag in git for this project."
+        )
+        modVersion = 'NO-GIT-TAG-SET'
+    }
+}
 
 version = modVersion
 group = modGroup
