@@ -721,7 +721,7 @@ tasks.register('generateChangelog') {
     doLast {
         def lastTag = getLastTag()
 
-        def changelog = run(([
+        def changelog = runShell(([
                 "git",
                 "log",
                 "--date=format:%d %b %Y",
