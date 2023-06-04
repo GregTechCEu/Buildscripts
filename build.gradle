@@ -733,7 +733,7 @@ tasks.register('generateChangelog') {
         if (changelog) {
             changelog = "Changes since ${lastTag}:\n${{("\n" + changelog).replaceAll("\n", "\n* ")}}"
         }
-        def f = new File('build/changelog.md')
+        def f = getFile('build/changelog.md')
         f.write(changelog ?: 'There have been no changes.', 'UTF-8')
     }
 }
@@ -893,9 +893,9 @@ def getChangelog() {
         return new File(changelogEnv.get())
     }
     if (generateDefaultChangelog.toBoolean()) {
-        return new File('build/changelog.md')
+        return getFile('build/changelog.md')
     }
-    return new File('CHANGELOG.md')
+    return getFile('CHANGELOG.md')
 }
 
 
