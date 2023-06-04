@@ -1044,7 +1044,8 @@ static runShell(command) {
     return outputStream.toString().trim()
 }
 
-static getLastTag() {
+def getLastTag() {
+    def githubTag = providers.environmentVariable('GITHUB_TAG')
     return runShell('git describe --abbrev=0 --tags ' +
-            System.getenv('GITHUB_TAG') ? runShell('git rev-list --tags --skip=1 --max-count=1') : '')
+            (githubTag.isPresent() ? runShell('git rev-list --tags --skip=1 --max-count=1') : ''))
 }
