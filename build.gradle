@@ -242,6 +242,12 @@ tasks.withType(ScalaCompile).configureEach {
 }
 
 
+// Allow others using this buildscript to have custom gradle code run
+if (getFile('addon.gradle').exists()) {
+    apply from: 'addon.gradle'
+}
+
+
 // Configure Minecraft
 
 // Try to gather mod version from git tags if version is not manually specified
@@ -297,12 +303,6 @@ if (generateGradleTokenClass) {
 
 tasks.named('processIdeaSettings').configure {
     dependsOn('injectTags')
-}
-
-
-// Allow others using this buildscript to have custom gradle code run
-if (getFile('addon.gradle').exists()) {
-    apply from: 'addon.gradle'
 }
 
 
