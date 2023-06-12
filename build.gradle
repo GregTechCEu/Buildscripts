@@ -3,6 +3,7 @@
  * DO NOT CHANGE THIS FILE!
  * Also, you may replace this file at any time if there is an update available.
  * Please check https://github.com/GregTechCEu/Buildscripts/blob/master/build.gradle for updates.
+ * You can also run ./gradlew updateBuildScript to update your buildscript.
  */
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
