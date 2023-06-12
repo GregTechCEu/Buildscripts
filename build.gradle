@@ -672,16 +672,22 @@ idea {
     project {
         settings {
             runConfigurations {
-                '1. Run Client'(Gradle) {
+                '1. Setup Workspace'(Gradle) {
+                    taskNames = ['setupDecompWorkspace']
+                }
+                '2. Build Jars'(Gradle) {
+                    taskNames = ['build']
+                }
+                '3. Run Client'(Gradle) {
                     taskNames = ['runClient']
                 }
-                '2. Run Server'(Gradle) {
+                '4. Run Server'(Gradle) {
                     taskNames = ['runServer']
                 }
-                '3. Run Obfuscated Client'(Gradle) {
+                '5. Run Obfuscated Client'(Gradle) {
                     taskNames = ['runObfClient']
                 }
-                '4. Run Obfuscated Server'(Gradle) {
+                '6. Run Obfuscated Server'(Gradle) {
                     taskNames = ['runObfServer']
                 }
                 if (enableSpotless.toBoolean()) {
