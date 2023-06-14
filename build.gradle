@@ -54,6 +54,7 @@ checkPropertyExists("containsMixinsAndOrCoreModOnly")
 
 // Optional properties: we can assume some default behavior if these are missing
 propertyDefaultIfUnset("modVersion", "")
+propertyDefaultIfUnset("includeMCVersionJar", false)
 propertyDefaultIfUnset("autoUpdateBuildScript", false)
 propertyDefaultIfUnset("modArchivesBaseName", project.modId)
 propertyDefaultIfUnsetWithEnvVar("developmentEnvironmentUserName", "Developer", "DEV_USERNAME")
@@ -264,7 +265,13 @@ if (!modVersion) {
     }
 }
 
-version = modVersion
+if (includeMCVersionJar.toBoolean()){
+    version = "${minecraftVersion}-${modVersion}"
+}
+else {
+    version = modVersion
+}
+
 group = modGroup
 archivesBaseName = modArchivesBaseName
 
@@ -692,7 +699,7 @@ idea {
                     taskNames = ['runObfServer']
                 }
                 if (enableSpotless.toBoolean()) {
-                    "5. Apply Spotless"(Gradle) {
+                    "7. Apply Spotless"(Gradle) {
                         taskNames = ["spotlessApply"]
                     }
                 }
