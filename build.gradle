@@ -699,7 +699,7 @@ idea {
                     '6. Apply Spotless'(Gradle) {
                         taskNames = ["spotlessApply"]
                     }
-                    '7. Build Jars' (Gradle) {
+                    '7. Build Jars'(Gradle) {
                         taskNames = ['build']
                     }
                 } else {
