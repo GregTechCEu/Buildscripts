@@ -31,9 +31,14 @@ jobs:
       - name: Create Pull Request
         id: create-pull-request
         uses: peter-evans/create-pull-request@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.BUILDSCRIPT_MAINTENANCE_TOKEN }}
         with:
+          token: ${{ secrets.BUILDSCRIPT_MAINTENANCE_TOKEN }}
+          committer: GitHub <noreply@github.com>
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com
           add-paths: build.gradle
           commit-message: '[ci skip] update build script version to ${{ steps.update-buildscript.outputs.new_version }}'
-          branch: buildscript-maintenance
+          branch: gha-buildscript-maintenance
           title: Update build script version to ${{ steps.update-buildscript.outputs.new_version }}
           body: This pull request is created by the buildscript-maintenance workflow
