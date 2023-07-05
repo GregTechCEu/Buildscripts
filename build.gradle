@@ -338,7 +338,8 @@ repositories {
                 //noinspection ForeignDelegate
                 maven {
                     name = 'Curse Maven'
-                    url = 'https://beta.cursemaven.com'
+                    url = 'https://www.cursemaven.com'
+                    // url = 'https://beta.cursemaven.com'
                 }
             }
             filter {
