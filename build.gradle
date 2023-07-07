@@ -368,10 +368,6 @@ repositories {
         }
     }
     if (usesMixins.toBoolean() || forceEnableMixins.toBoolean()) {
-        maven {
-            name 'Sponge Maven'
-            url 'https://repo.spongepowered.org/maven'
-        }
         // need to add this here even if we did not above
         if (!includeWellKnownRepositories.toBoolean()) {
             maven {
