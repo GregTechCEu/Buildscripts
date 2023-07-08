@@ -589,6 +589,15 @@ jar {
     }
 }
 
+// Configure default run tasks
+runClient {
+    workingDir = file('run/client')
+}
+
+runServer {
+    workingDir = file('run/server')
+}
+
 // Create API library jar
 tasks.register('apiJar', Jar) {
     archiveClassifier.set 'api'
