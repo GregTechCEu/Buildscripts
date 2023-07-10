@@ -69,6 +69,7 @@ propertyDefaultIfUnset("forceEnableMixins", false)
 propertyDefaultIfUnset("usesShadowedDependencies", false)
 propertyDefaultIfUnset("minimizeShadowedDependencies", true)
 propertyDefaultIfUnset("relocateShadowedDependencies", true)
+propertyDefaultIfUnset("separateRunDirectories", false)
 propertyDefaultIfUnsetWithEnvVar("modrinthProjectId", "", "MODRINTH_PROJECT_ID")
 propertyDefaultIfUnset("modrinthRelations", "")
 propertyDefaultIfUnsetWithEnvVar("curseForgeProjectId", "", "CURSEFORGE_PROJECT_ID")
@@ -590,12 +591,14 @@ jar {
 }
 
 // Configure default run tasks
-runClient {
-    workingDir = file('run/client')
-}
+if (separateRunDirectories.toBoolean()) {
+    runClient {
+        workingDir = file('run/client')
+    }
 
-runServer {
-    workingDir = file('run/server')
+    runServer {
+        workingDir = file('run/server')
+    }
 }
 
 // Create API library jar
