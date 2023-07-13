@@ -11,7 +11,7 @@ This build script was heavily inspired by the build script created by GT New Hor
 - Automatic "Tag" creation, which can supply your Java code with the ModId, ModName, and Version generated for you by Gradle
 - Access Transformers, can even have multiple
 - Core Mods
-- Mixin, or specifying Mixin as a dependency if you do not use it, but projects you depend on do
+- Mixin using MixinBooter 8 and Unimix, or specifying Mixin as a dependency if you do not use it but projects you depend on do
 - Automatic repository settings, including common repositories such as CurseMaven, Modrinth Maven, and others
 - Automatically include JEI and The One Probe in your project, at both compile-time and runtime
 - CurseForge and Modrinth deployments
@@ -69,11 +69,13 @@ And many more to come! And of course, all of these features are toggleable via a
 ## How to Use
 ### Files
 - `build.gradle`: This file is automatically updated, and as a result should not be modified by the user directly
-- `gradle.properties`: Contains all of the user configuration for the build script
-- `dependencies.gradle`: Add your mod's dependencies here. This is separate from the main build script so that you can replace `build.gradle` if an update is available
-- `repositories.gradle`: Add your dependencies' repositories here. Many common ones are already handled by `build.gradle`
-- `addon.gradle`:  An optional file, which can be used if you have any more advanced gradle commands. However, we are open to new features, so let us know if there is something you want that we could add to this build script to avoid needing this file!
+- `gradle.properties`: Contains all the user configuration for the build script
 - `settings.gradle`: This file contains some basic setup of the build script. It is currently not versioned, so it is safe to add to, though should not have things removed from it
+### Custom Files
+Any of these files can optionally be either `.gradle` (Groovy), or `.gradle.kts` (Kotlin DSL).
+- `dependencies.gradle[.kts]`: Add your mod's dependencies here. This is separate from the main build script so that you can replace `build.gradle` if an update is available
+- `repositories.gradle[.kts]`: Add your dependencies' repositories here. Many common ones are already handled by `build.gradle`
+- `addon.gradle[.kts]`:  An optional file, which can be used if you have any more advanced gradle commands. However, we are open to new features, so let us know if there is something you want that we could add to this build script to avoid needing this file!
 
 ### Custom Gradle Tasks
 - `./gradlew updateBuildScript`
