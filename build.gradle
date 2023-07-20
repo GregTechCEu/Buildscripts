@@ -66,6 +66,7 @@ propertyDefaultIfUnset("includeWellKnownRepositories", true)
 propertyDefaultIfUnset("includeCommonDevEnvMods", true)
 propertyDefaultIfUnset("noPublishedSources", false)
 propertyDefaultIfUnset("forceEnableMixins", false)
+propertyDefaultIfUnset("generateMixinConfig", true)
 propertyDefaultIfUnset("usesShadowedDependencies", false)
 propertyDefaultIfUnset("minimizeShadowedDependencies", true)
 propertyDefaultIfUnset("relocateShadowedDependencies", true)
@@ -561,7 +562,7 @@ tasks.register('generateAssets') {
         }
 
         // mixins.{modid}.json
-        if (usesMixins.toBoolean()) {
+        if (usesMixins.toBoolean() && generateMixinConfig.toBoolean()) {
             def mixinConfigFile = getFile("src/main/resources/mixins.${modId}.json")
             if (!mixinConfigFile.exists()) {
                 def mixinConfigRefmap = "mixins.${modId}.refmap.json"
