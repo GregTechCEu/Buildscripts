@@ -308,8 +308,13 @@ minecraft {
             '-Dmixin.debug.export=true'
         ])
     }
-    if (coreModClass) {
-        extraRunJvmArguments.add("-Dfml.coreMods.load=${modGroup}.${coreModClass}")
+}
+
+if (coreModClass) {
+    for (runTask in ['runClient', 'runServer']) {
+        tasks.named(runTask).configure {
+            extraJvmArgs.add("-Dfml.coreMods.load=${modGroup}.${coreModClass}")
+        }
     }
 }
 
