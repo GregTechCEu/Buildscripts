@@ -411,13 +411,15 @@ configurations {
 }
 
 dependencies {
-    if (usesMixins.toBoolean() || forceEnableMixins.toBoolean()) {
-        implementation 'zone.rong:mixinbooter:8.3'
-        String mixin = 'zone.rong:mixinbooter:8.3'
-        if (usesMixins.toBoolean()) {
-            mixin = modUtils.enableMixins(mixin, "mixins.${modId}.refmap.json")
-        }
+    String mixin = 'zone.rong:mixinbooter:8.3'
+    if (usesMixins.toBoolean()) {
+        annotationProcessor 'org.ow2.asm:asm-debug-all:5.2'
+        // should use 24.1.1 but 30.0+ has a vulnerability fix
+        annotationProcessor 'com.google.guava:guava:30.0-jre'
+        // should use 2.8.6 but 2.8.9+ has a vulnerability fix
+        annotationProcessor 'com.google.code.gson:gson:2.8.9'
 
+        mixin = modUtils.enableMixins(mixin, "mixins.${modId}.refmap.json")
         api (mixin) {
             transitive = false
         }
@@ -425,17 +427,13 @@ dependencies {
         annotationProcessor(mixin) {
             transitive = false
         }
-
-        annotationProcessor 'org.ow2.asm:asm-debug-all:5.2'
-        // should use 24.1.1 but 30.0+ has a vulnerability fix
-        annotationProcessor 'com.google.guava:guava:30.0-jre'
-        // should use 2.8.6 but 2.8.9+ has a vulnerability fix
-        annotationProcessor 'com.google.code.gson:gson:2.8.9'
+    } else if (forceEnableMixins.toBoolean()) {
+        runtimeOnly(mixin)
     }
 
     if (enableJUnit.toBoolean()) {
-        testImplementation 'org.junit.jupiter:junit-jupiter:5.9.1'
-        testImplementation 'org.hamcrest:hamcrest:2.2'
+        testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
+        testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     }
 
     if (enableModernJavaSyntax.toBoolean()) {
