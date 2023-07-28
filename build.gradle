@@ -20,6 +20,7 @@ import static org.gradle.internal.logging.text.StyledTextOutput.Style
 plugins {
     id 'java'
     id 'java-library'
+    id 'base'
     id 'eclipse'
     id 'maven-publish'
     id 'org.jetbrains.gradle.plugin.idea-ext' version '1.1.7'
@@ -277,7 +278,10 @@ else {
 }
 
 group = modGroup
-archivesBaseName = modArchivesBaseName
+
+base {
+    archivesName = modArchivesBaseName
+}
 
 minecraft {
     mcVersion = minecraftVersion
