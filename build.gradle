@@ -67,6 +67,7 @@ propertyDefaultIfUnset("includeWellKnownRepositories", true)
 propertyDefaultIfUnset("includeCommonDevEnvMods", true)
 propertyDefaultIfUnset("noPublishedSources", false)
 propertyDefaultIfUnset("forceEnableMixins", false)
+propertyDefaultIfUnsetWithEnvVar("enableCoreModDebug", false, "CORE_MOD_DEBUG")
 propertyDefaultIfUnset("generateMixinConfig", true)
 propertyDefaultIfUnset("usesShadowedDependencies", false)
 propertyDefaultIfUnset("minimizeShadowedDependencies", true)
@@ -308,6 +309,14 @@ minecraft {
             '-Dmixin.debug.export=true'
         ])
     }
+
+    if (enableCoreModDebug.toBoolean()) {
+        extraRunJvmArguments.addAll([
+                '-Dlegacy.debugClassLoading=true',
+                '-Dlegacy.debugClassLoadingFiner=true',
+                '-Dlegacy.debugClassLoadingSave=true'
+        ])
+    }
 }
 
 if (coreModClass) {
@@ -380,6 +389,11 @@ repositories {
         maven {
             name 'BlameJared Maven'
             url 'https://maven.blamejared.com'
+        }
+        maven {
+            name 'GTNH Maven'
+            url 'http://jenkins.usrv.eu:8081/nexus/content/groups/public'
+            allowInsecureProtocol = true
         }
     }
     if (usesMixins.toBoolean() || forceEnableMixins.toBoolean()) {
@@ -457,6 +471,9 @@ dependencies {
 
     compileOnlyApi 'org.jetbrains:annotations:23.0.0'
     annotationProcessor 'org.jetbrains:annotations:23.0.0'
+    patchedMinecraft('net.minecraft:launchwrapper:1.15') {
+        transitive = false
+    }
 
     if (includeCommonDevEnvMods.toBoolean()) {
         implementation 'mezz.jei:jei_1.12.2:4.16.1.302'
