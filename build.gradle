@@ -471,7 +471,7 @@ dependencies {
 
     compileOnlyApi 'org.jetbrains:annotations:23.0.0'
     annotationProcessor 'org.jetbrains:annotations:23.0.0'
-    patchedMinecraft('net.minecraft:launchwrapper:1.17.1') {
+    patchedMinecraft('net.minecraft:launchwrapper:1.17.2') {
         transitive = false
     }
 
