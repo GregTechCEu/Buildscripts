@@ -7,6 +7,7 @@ on:
     branches: [ master, main ]
     paths:
       - build.gradle
+      - settings.gradle
   workflow_dispatch: { }
 
 jobs:
