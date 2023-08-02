@@ -22,12 +22,13 @@ This build script was heavily inspired by the build script created by GT New Hor
 - Deployment testing options, so that you can ensure your tokens and other variables are set up properly
 - Custom username setting for development, that can be set either project-wide or via an environment variable for shared projects
 - Ships with Jetbrains annotations by default, so you have another option over `javax`
-- Scala support
+- Kotlin and Scala support
 - Custom Maven publishing location support, with all secrets held by system environment variables
 - Automatic mixin JSON generation, as well as mcmod.info and pack.mcmeta if they are missing
 - Dependency shadowing for releasing dependencies in your builds, more info [here](https://github.com/GregTechCEu/Buildscripts/blob/master/docs/shadow.md)
 - Automatic changelog generation by generating a list of all commits between the current tag and the previous tag
 - Automatic mod version detection from the latest git tag (or manually specified, if you prefer)
+- Updated Launchwrapper for better ASM/mixin debugging options
 
 And many more to come! And of course, all of these features are toggleable via an option in `gradle.properties`.
 
