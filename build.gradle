@@ -220,7 +220,7 @@ if (enableSpotless.toBoolean()) {
             removeUnusedImports()
             endWithNewline()
             //noinspection GroovyAssignabilityCheck
-            eclipse('4.19').configFile(formatFile)
+            eclipse('4.19.0').configFile(formatFile)
         }
         scala {
             target 'src/*/scala/**/*.scala'
