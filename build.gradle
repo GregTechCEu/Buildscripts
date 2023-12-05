@@ -222,6 +222,16 @@ if (enableSpotless.toBoolean()) {
             //noinspection GroovyAssignabilityCheck
             eclipse('4.19.0').configFile(formatFile)
         }
+        kotlin {
+            target 'src/*/kotlin/**/*.kt'
+
+            toggleOffOn()
+            ktfmt('0.39')
+
+            trimTrailingWhitespace()
+            indentWithSpaces(4)
+            endWithNewline()
+        }
         scala {
             target 'src/*/scala/**/*.scala'
             scalafmt('3.7.1')
