@@ -1012,7 +1012,7 @@ def getSecondaryArtifacts() {
 }
 
 def getReleaseType() {
-    String type = providers.environmentVariable('RELEASE_TYPE').getOrElse(project.releaseType)
+    String type = project.releaseType
     if (!(type in ['release', 'beta', 'alpha'])) {
         throw new Exception("Release type invalid! Found \"" + type + "\", allowed: \"release\", \"beta\", \"alpha\"")
     }
