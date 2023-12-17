@@ -904,7 +904,7 @@ if (cfApiKey.isPresent() || deploymentDebug.toBoolean()) {
             mainFile.addJavaVersion "Java 8"
             mainFile.addGameVersion minecraftVersion
 
-            parseRelations(modrinthRelations, Plattform.CURSE).each {
+            parseRelations(curseForgeRelations, Plattform.CURSE).each {
                 mainFile.addRelation(it[1], it[0])
             }
 
