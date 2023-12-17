@@ -15,7 +15,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = Tags.MODID, version = Tags.VERSION, name = Tags.MODNAME, acceptedMinecraftVersions = "[1.12.2]")
+@Mod(modid = Tags.MODID, version = Tags.VERSION, name = Tags.MODNAME, dependencies = Tags.DEPENDENCIES, acceptedMinecraftVersions = "[1.12.2]")
 public class MyMod {
 
     public static final Logger LOGGER = LogManager.getLogger(Tags.MODID);

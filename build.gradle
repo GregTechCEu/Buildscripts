@@ -10,6 +10,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.gtnewhorizons.retrofuturagradle.mcp.ReobfuscatedJar
 import com.modrinth.minotaur.dependencies.ModDependency
 import com.modrinth.minotaur.dependencies.VersionDependency
+import groovy.json.JsonSlurper
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.gradle.internal.logging.text.StyledTextOutputFactory
@@ -62,6 +63,7 @@ propertyDefaultIfUnset("generateGradleTokenClass", "")
 propertyDefaultIfUnset("gradleTokenModId", "")
 propertyDefaultIfUnset("gradleTokenModName", "")
 propertyDefaultIfUnset("gradleTokenVersion", "")
+propertyDefaultIfUnset("gradleTokenDependencies", "")
 propertyDefaultIfUnset("includeWellKnownRepositories", true)
 propertyDefaultIfUnset("includeCommonDevEnvMods", true)
 propertyDefaultIfUnset("noPublishedSources", false)
@@ -73,10 +75,11 @@ propertyDefaultIfUnset("minimizeShadowedDependencies", true)
 propertyDefaultIfUnset("relocateShadowedDependencies", true)
 propertyDefaultIfUnset("separateRunDirectories", false)
 propertyDefaultIfUnset("versionDisplayFormat", '$MOD_NAME \u2212 $VERSION')
+propertyDefaultIfUnset("forgeRelations", "relations.json")
 propertyDefaultIfUnsetWithEnvVar("modrinthProjectId", "", "MODRINTH_PROJECT_ID")
-propertyDefaultIfUnset("modrinthRelations", "")
+propertyDefaultIfUnset("modrinthRelations", "relations.json")
 propertyDefaultIfUnsetWithEnvVar("curseForgeProjectId", "", "CURSEFORGE_PROJECT_ID")
-propertyDefaultIfUnset("curseForgeRelations", "")
+propertyDefaultIfUnset("curseForgeRelations", "relations.json")
 propertyDefaultIfUnsetWithEnvVar("releaseType", "release", "RELEASE_TYPE")
 propertyDefaultIfUnset("generateDefaultChangelog", false)
 propertyDefaultIfUnset("customMavenPublishUrl", "")
@@ -342,6 +345,9 @@ minecraft {
     }
     if (gradleTokenVersion) {
         injectedTags.put gradleTokenVersion, modVersion
+    }
+    if (gradleTokenDependencies) {
+        injectedTags.put gradleTokenDependencies, parseForgeDependencies()
     }
 
     // JVM arguments
@@ -898,19 +904,8 @@ if (cfApiKey.isPresent() || deploymentDebug.toBoolean()) {
             mainFile.addJavaVersion "Java 8"
             mainFile.addGameVersion minecraftVersion
 
-            if (curseForgeRelations.size() != 0) {
-                String[] deps = curseForgeRelations.split(';')
-                deps.each { dep ->
-                    if (dep.size() == 0) {
-                        return
-                    }
-                    String[] parts = dep.split(':')
-                    String type = parts[0], slug = parts[1]
-                    if (!(type in ['requiredDependency', 'embeddedLibrary', 'optionalDependency', 'tool', 'incompatible'])) {
-                        throw new Exception('Invalid Curseforge dependency type: ' + type)
-                    }
-                    mainFile.addRelation(slug, type)
-                }
+            parseRelations(modrinthRelations, Plattform.CURSE).each {
+                mainFile.addRelation(it[1], it[0])
             }
 
             for (artifact in getSecondaryArtifacts()) {
@@ -939,38 +934,150 @@ if (modrinthApiKey.isPresent() || deploymentDebug.toBoolean()) {
         debugMode = deploymentDebug.toBoolean()
         uploadFile = reobfJar
         additionalFiles = getSecondaryArtifacts()
-    }
-    if (modrinthRelations.size() != 0) {
-        String[] deps = modrinthRelations.split(';')
-        deps.each { dep ->
-            if (dep.size() == 0) {
-                return
-            }
-            String[] parts = dep.split(':')
-            String[] qual = parts[0].split('-')
-            addModrinthDep(qual[0], qual[1], parts[1])
-        }
+        dependencies = parseRelations(modrinthRelations, Plattform.MODRINTH)
     }
     tasks.modrinth.dependsOn(build)
     tasks.modrinth.dependsOn('generateChangelog')
 }
 
-def addModrinthDep(String scope, String type, String name) {
-    com.modrinth.minotaur.dependencies.Dependency dep
-    if (!(scope in ['required', 'optional', 'incompatible', 'embedded'])) {
-        throw new Exception('Invalid modrinth dependency scope: ' + scope)
+def parseForgeDependencies() {
+    def deps = ""
+    parseRelations(forgeRelations, Plattform.FORGE).each { List<String> it ->
+        deps += "${it[0]}:${it[1]}"
+        if (!it[2].isEmpty()) deps += "@${it[2]}"
+        deps += ";"
     }
-    switch (type) {
-        case 'project':
-            dep = new ModDependency(name, scope)
-            break
-        case 'version':
-            dep = new VersionDependency(name, scope)
-            break
-        default:
-            throw new Exception('Invalid modrinth dependency type: ' + type)
+    return deps
+}
+
+def parseRelations(String relations, Plattform ctx) {
+    if (relations.isEmpty()) return []
+    def file = getFile(relations)
+    if (!file.exists()) {
+        if (ctx == Plattform.FORGE) return []
+        return parseRelationLegacy(relations, ctx)
     }
-    project.modrinth.dependencies.add(dep)
+    def parsed = []
+    def cfg = new JsonSlurper().parse(file)
+    println cfg
+    parsed.addAll(parseRelationList(cfg, ctx, RelationType.REQUIRED))
+    parsed.addAll(parseRelationList(cfg, ctx, RelationType.OPTIONAL))
+    parsed.addAll(parseRelationList(cfg, ctx, RelationType.EMBEDDED))
+    parsed.addAll(parseRelationList(cfg, ctx, RelationType.INCOMPATIBLE))
+    if (ctx != Plattform.MODRINTH) {
+        parsed.addAll(parseRelationList(cfg, ctx, RelationType.TOOL))
+    }
+    return parsed
+}
+
+static parseRelationLegacy(String relations, Plattform ctx) {
+    def parsed = []
+    relations.split(";").each {
+        if (it.length() == 0) return
+        String[] parts = it.split(':')
+        switch (ctx) {
+            case Plattform.CURSE:
+                String type = parts[0], slug = parts[1]
+                if (!RelationType.values().any { it.cf == type }) {
+                    throw new Exception('Invalid Curseforge dependency type: ' + type)
+                }
+                parsed << [type, slug, '']
+                break
+            case Plattform.MODRINTH:
+                String[] qual = parts[0].split('-')
+                if (!RelationType.values().any { it.mr == qual[0] }) {
+                    throw new Exception('Invalid modrinth dependency scope: ' + qual[0])
+                }
+                def dep
+                switch (qual[1]) {
+                    case 'project':
+                        dep = new ModDependency(parts[1], qual[0])
+                        break
+                    case 'version':
+                        dep = new VersionDependency(parts[1], qual[0])
+                        break
+                    default:
+                        throw new Exception('Invalid modrinth dependency type: ' + type)
+                }
+                parsed << dep
+        }
+    }
+    return parsed
+}
+
+static List<List<String>> parseRelationList(def cfg, Plattform ctx, RelationType type) {
+    def parsed = []
+    for (def dep : type.get(cfg)) {
+        if (dep instanceof String) {
+            if (dep.isEmpty() || dep.startsWith("_comment")) continue
+            def parts = dep.split(";")
+            def order = parts.length == 1 ? 'none' : parts[0].toLowerCase()
+            parts = (parts.length == 1 ? parts[0] : parts[1]).split("@")
+            def version = parts.length == 1 ? '' : parseVersion(parts[1], ctx)
+            def ids = parts[0].split(":")
+            def modId = ids[0]
+            switch (ctx) {
+                case Plattform.FORGE:
+                    if (order == "none") continue
+                    if (type == RelationType.REQUIRED && !("required" in order)) {
+                        order = order.isEmpty() ? "required" : "required-" + order
+                    } else if (order.isEmpty()) {
+                        order = "after"
+                    }
+                    parsed << [order, modId, version]
+                    break
+
+                case Plattform.CURSE:
+                    def id = ids.length > 1 ? ids[1].trim() : modId
+                    if (!id.isEmpty()) parsed << [type.cf, id, version]
+                    break
+                case Plattform.MODRINTH:
+                    def id = ids.length > 2 ? ids[2].trim() : (ids.length > 1 ? ids[1].trim() : modId)
+                    if (!id.isEmpty()) {
+                        parts = id.split("/", 2)
+                        if (parts.length == 1) parsed << new ModDependency(id, type.mr)
+                        else {
+                            id = parts[0]
+                            if (id.isEmpty()) parsed << new VersionDependency(parts[1], type.mr)
+                            else parsed << new VersionDependency(id, parts[1], type.mr)
+                        }
+                    }
+                    break
+            }
+        }
+    }
+    return parsed
+}
+
+static parseVersion(String version, Plattform ctx) {
+    if (version.charAt(0) in ['[' as char, '(' as char]) {
+        if (ctx == Plattform.FORGE) return version
+        return version.substring(1, version.indexOf(','))
+    }
+    if (ctx == Plattform.FORGE) return "[$version,)"
+    return version
+}
+
+enum Plattform {
+    FORGE, CURSE, MODRINTH
+}
+
+enum RelationType {
+    REQUIRED("requiredDependency", "required"),
+    OPTIONAL("optionalDependency", "optional"),
+    EMBEDDED("embeddedLibrary", "embedded"),
+    INCOMPATIBLE("incompatible", "incompatible"),
+    TOOL("tool", "")
+    final String cf, mr
+
+    RelationType(String cf, String mr) {
+        this.cf = cf
+        this.mr = mr
+    }
+
+    def get(def map) {
+        return map[cf] ?: map[mr] ?: Collections.emptyList()
+    }
 }
 
 if (customMavenPublishUrl) {
