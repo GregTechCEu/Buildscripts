@@ -688,7 +688,7 @@ jar {
         from sourceSets.api.output
         dependsOn apiClasses
 
-        include "${apiPackage}/**"
+        include "${modGroupPath}/**"
         include "assets/**"
         include "mcmod.info"
         include "pack.mcmeta"
@@ -712,12 +712,21 @@ if (separateRunDirectories.toBoolean()) {
 // Create API library jar
 tasks.register('apiJar', Jar) {
     archiveClassifier.set 'api'
-    from(sourceSets.main.java) {
-        include "${modGroupPath}/${apiPackagePath}/**"
-    }
+    if (useSrcApiPath) {
+        from(sourceSets.api.java) {
+            include "${modGroupPath}/${apiPackagePath}/**"
+        }
+        from(sourceSets.api.output) {
+            include "${modGroupPath}/${apiPackagePath}/**"
+        }
+    } else {
+        from(sourceSets.main.java) {
+            include "${modGroupPath}/${apiPackagePath}/**"
+        }
 
-    from(sourceSets.main.output) {
-        include "${modGroupPath}/${apiPackagePath}/**"
+        from(sourceSets.main.output) {
+            include "${modGroupPath}/${apiPackagePath}/**"
+        }
     }
 }
 
