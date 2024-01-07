@@ -62,6 +62,7 @@ propertyDefaultIfUnset("generateGradleTokenClass", "")
 propertyDefaultIfUnset("gradleTokenModId", "")
 propertyDefaultIfUnset("gradleTokenModName", "")
 propertyDefaultIfUnset("gradleTokenVersion", "")
+propertyDefaultIfUnset("useSrcApiPath", false)
 propertyDefaultIfUnset("includeWellKnownRepositories", true)
 propertyDefaultIfUnset("includeCommonDevEnvMods", true)
 propertyDefaultIfUnset("noPublishedSources", false)
@@ -105,9 +106,16 @@ if (!getFile(targetPackageJava).exists() && !getFile(targetPackageScala).exists(
 }
 
 if (apiPackage) {
-    targetPackageJava = javaSourceDir + modGroupPath + '/' + apiPackagePath
-    targetPackageScala = scalaSourceDir + modGroupPath + '/' + apiPackagePath
-    targetPackageKotlin = kotlinSourceDir + modGroupPath + '/' + apiPackagePath
+    final String endApiPath = modGroupPath + '/' + apiPackagePath
+    if (useSrcApiPath) {
+        targetPackageJava = 'src/api/java' + endApiPath
+        targetPathScala = 'src/api/scala' + endApiPath
+        targetPathKotlin = 'src/api/kotlin' + endApiPath
+    } else {
+        targetPackageJava = javaSourceDir + endApiPath
+        targetPackageScala = scalaSourceDir + endApiPath
+        targetPackageKotlin = kotlinSourceDir + endApiPath
+    }
     if (!getFile(targetPackageJava).exists() && !getFile(targetPackageScala).exists() && !getFile(targetPackageKotlin).exists()) {
         throw new GradleException("Could not resolve \"apiPackage\"! Could not find ${targetPackageJava} or ${targetPackageScala} or ${targetPackageKotlin}")
     }
@@ -673,6 +681,19 @@ jar {
     from provider {
         configurations.embed.collect {
             it.isDirectory() ? it : zipTree(it)
+        }
+    }
+
+    if (useSrcApiPath && apiPackage) {
+        from sourceSets.api.output
+        dependsOn apiClasses
+
+        include "${apiPackage}/**"
+        include "assets/**"
+        include "mcmod.info"
+        include "pack.mcmeta"
+        if (accessTransformersFile) {
+            include "META-INF/${accessTransformersFile}"
         }
     }
 }
