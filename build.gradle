@@ -541,6 +541,12 @@ pluginManager.withPlugin('org.jetbrains.kotlin.kapt') {
     }
 }
 
+configurations.configureEach {
+    resolutionStrategy.dependencySubstitution {
+        substitute module('org.scala-lang:scala-library:2.11.1') using module('org.scala-lang:scala-library:2.11.5') because('To allow mixing with Java 8 targets')
+    }
+}
+
 if (getFile('dependencies.gradle').exists()) {
     apply from: 'dependencies.gradle'
 } else if (getFile('dependencies.gradle.kts').exists()) {
