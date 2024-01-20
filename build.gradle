@@ -527,9 +527,13 @@ dependencies {
     }
 
     if (includeCommonDevEnvMods.toBoolean()) {
-        implementation 'mezz.jei:jei_1.12.2:4.16.1.302'
-        //noinspection DependencyNotationArgument
-        implementation rfg.deobf('curse.maven:top-245211:2667280') // TOP 1.4.28
+        if (!(modId.equals('jei'))) {
+            implementation 'mezz.jei:jei_1.12.2:4.16.1.302'
+        }
+        if (!(modId.equals('theoneprobe'))) {
+            //noinspection DependencyNotationArgument
+            implementation rfg.deobf('curse.maven:top-245211:2667280') // TOP 1.4.28
+        }
     }
 }
 
