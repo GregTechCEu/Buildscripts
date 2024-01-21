@@ -65,6 +65,7 @@ propertyDefaultIfUnset("gradleTokenVersion", "")
 propertyDefaultIfUnset("useSrcApiPath", false)
 propertyDefaultIfUnset("includeWellKnownRepositories", true)
 propertyDefaultIfUnset("includeCommonDevEnvMods", true)
+propertyDefaultIfUnset("allowInsecureDependencySources", false)
 propertyDefaultIfUnset("noPublishedSources", false)
 propertyDefaultIfUnset("forceEnableMixins", false)
 propertyDefaultIfUnsetWithEnvVar("enableCoreModDebug", false, "CORE_MOD_DEBUG")
@@ -392,7 +393,7 @@ tasks.named('processIdeaSettings').configure {
 
 // Allow unsafe repos but warn
 repositories.configureEach { repo ->
-    if (repo instanceof UrlArtifactRepository) {
+    if (allowInsecureDependencySources.toBoolean() && repo instanceof UrlArtifactRepository) {
         if (repo.getUrl() != null && repo.getUrl().getScheme() == "http" && !repo.allowInsecureProtocol) {
             logger.warn("Deprecated: Allowing insecure connections for repo '${repo.name}' - add 'allowInsecureProtocol = true'")
             repo.allowInsecureProtocol = true
