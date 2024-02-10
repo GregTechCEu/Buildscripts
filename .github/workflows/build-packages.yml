@@ -1,6 +1,7 @@
 name: Release starter and migration packages on tag push
 
 on:
+  workflow_dispatch:
   push:
     tags: [ '*' ]
 
