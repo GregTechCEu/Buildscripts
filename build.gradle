@@ -477,6 +477,22 @@ configurations {
             config.extendsFrom(shadowCompile)
         }
     }
+
+    create("runtimeOnlyNonPublishable") {
+        description = "Runtime only dependencies that are not published alongside the jar"
+        canBeConsumed = false
+        canBeResolved = false
+    }
+    create("devOnlyNonPublishable") {
+        description = "Runtime and compiletime dependencies that are not published alongside the jar (compileOnly + runtimeOnlyNonPublishable)"
+        canBeConsumed = false
+        canBeResolved = false
+    }
+
+    compileOnly.extendsFrom(devOnlyNonPublishable)
+    runtimeOnlyNonPublishable.extendsFrom(devOnlyNonPublishable)
+    runtimeClasspath.extendsFrom(runtimeOnlyNonPublishable)
+    testRuntimeClasspath.extendsFrom(runtimeOnlyNonPublishable)
 }
 
 String mixinProviderSpec = 'zone.rong:mixinbooter:8.9'
@@ -497,7 +513,7 @@ dependencies {
             transitive = false
         }
     } else if (forceEnableMixins.toBoolean()) {
-        runtimeOnly(mixinProviderSpec)
+        runtimeOnlyNonPublishable(mixinProviderSpec)
     }
 
     if (enableJUnit.toBoolean()) {
