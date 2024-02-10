@@ -446,6 +446,10 @@ repositories {
             name 'GTNH Maven'
             url 'https://nexus.gtnewhorizons.com/repository/public/'
         }
+        maven {
+            name 'GTCEu Maven'
+            url 'https://maven.gtceu.com'
+        }
     }
     if (usesMixins.toBoolean() || forceEnableMixins.toBoolean()) {
         // need to add this here even if we did not above
