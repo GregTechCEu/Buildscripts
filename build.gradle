@@ -107,7 +107,7 @@ if (!getFile(targetPackageJava).exists() && !getFile(targetPackageScala).exists(
 
 if (apiPackage) {
     final String endApiPath = modGroupPath + '/' + apiPackagePath
-    if (useSrcApiPath) {
+    if (useSrcApiPath.toBoolean()) {
         targetPackageJava = 'src/api/java/' + endApiPath
         targetPackageScala = 'src/api/scala/' + endApiPath
         targetPackageKotlin = 'src/api/kotlin/' + endApiPath
