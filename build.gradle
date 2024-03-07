@@ -993,7 +993,7 @@ if (cfApiKey.isPresent() || deploymentDebug.toBoolean()) {
                         list.add(additionalArtifact)
                     }
                 }
-                def summary = "# CurseForge Build Summary (Mod ${modName} | Project ID ${curseForgeProjectId})"
+                def summary = "## CurseForge Build Summary (Mod ${modName} | Project ID ${curseForgeProjectId})"
                 for (def artifact : list) {
                     def fileId = artifact.getCurseFileId()
                     def fileName = artifact.getArtifact().getSingleFile().name
