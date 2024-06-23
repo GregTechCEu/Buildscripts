@@ -67,6 +67,7 @@ propertyDefaultIfUnset("includeWellKnownRepositories", true)
 propertyDefaultIfUnset("includeCommonDevEnvMods", true)
 propertyDefaultIfUnset("noPublishedSources", false)
 propertyDefaultIfUnset("forceEnableMixins", false)
+propertyDefaultIfUnset("mixinConfigRefmap", "mixins.${project.modId}.refmap.json")
 propertyDefaultIfUnsetWithEnvVar("enableCoreModDebug", false, "CORE_MOD_DEBUG")
 propertyDefaultIfUnset("generateMixinConfig", true)
 propertyDefaultIfUnset("usesShadowedDependencies", false)
@@ -504,7 +505,7 @@ dependencies {
         // should use 2.8.6 but 2.8.9+ has a vulnerability fix
         annotationProcessor 'com.google.code.gson:gson:2.8.9'
 
-        mixinProviderSpec = modUtils.enableMixins(mixinProviderSpec, "mixins.${modId}.refmap.json")
+        mixinProviderSpec = modUtils.enableMixins(mixinProviderSpec, mixinConfigRefmap)
         api (mixinProviderSpec) {
             transitive = false
         }
@@ -679,7 +680,6 @@ tasks.register('generateAssets') {
         if (usesMixins.toBoolean() && generateMixinConfig.toBoolean()) {
             def mixinConfigFile = getFile("src/main/resources/mixins.${modId}.json")
             if (!mixinConfigFile.exists()) {
-                def mixinConfigRefmap = "mixins.${modId}.refmap.json"
 
                 mixinConfigFile.text = """{
   "package": "${modGroup}.${mixinsPackage}",
