@@ -69,6 +69,7 @@ propertyDefaultIfUnset("includeMCVersionJar", false)
 propertyDefaultIfUnset("autoUpdateBuildScript", false)
 propertyDefaultIfUnset("modArchivesBaseName", project.modId)
 propertyDefaultIfUnsetWithEnvVar("developmentEnvironmentUserName", "Developer", "DEV_USERNAME")
+propertyDefaultIfUnset("additionalJavaArguments", "")
 propertyDefaultIfUnset("enableJava17RunTasks", false)
 propertyDefaultIfUnset("generateGradleTokenClass", "")
 propertyDefaultIfUnset("gradleTokenModId", "")
@@ -380,6 +381,10 @@ minecraft {
                 '-Dlegacy.debugClassLoadingFiner=true',
                 '-Dlegacy.debugClassLoadingSave=true'
         ])
+    }
+
+    if (additionalJavaArguments.size() != 0) {
+        extraRunJvmArguments.addAll(additionalJavaArguments.split(';'))
     }
 
     if (enableJava17RunTasks.toBoolean()) {
