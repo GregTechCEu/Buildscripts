@@ -78,6 +78,7 @@ propertyDefaultIfUnset("gradleTokenVersion", "")
 propertyDefaultIfUnset("useSrcApiPath", false)
 propertyDefaultIfUnset("includeWellKnownRepositories", true)
 propertyDefaultIfUnset("includeCommonDevEnvMods", true)
+propertyDefaultIfUnset("stripForgeRequirements", false)
 propertyDefaultIfUnset("noPublishedSources", false)
 propertyDefaultIfUnset("forceEnableMixins", false)
 propertyDefaultIfUnsetWithEnvVar("enableCoreModDebug", false, "CORE_MOD_DEBUG")
@@ -565,6 +566,10 @@ dependencies {
     annotationProcessor 'org.jetbrains:annotations:24.1.0'
     patchedMinecraft('net.minecraft:launchwrapper:1.17.2') {
         transitive = false
+    }
+
+    if ((usesMixins.toBoolean() || forceEnableMixins.toBoolean()) && stripForgeRequirements.toBoolean()) {
+        runtimeOnlyNonPublishable 'com.cleanroommc:strip-latest-forge-requirements:1.0'
     }
 
     if (includeCommonDevEnvMods.toBoolean()) {
