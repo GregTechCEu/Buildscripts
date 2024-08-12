@@ -1391,7 +1391,7 @@ def getChangelog() {
 
 // Buildscript updating
 
-def buildscriptGradleVersion = '8.5'
+def buildscriptGradleVersion = '8.9'
 
 tasks.named('wrapper', Wrapper).configure {
     gradleVersion = buildscriptGradleVersion
