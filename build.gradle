@@ -33,16 +33,16 @@ plugins {
     id 'base'
     id 'eclipse'
     id 'maven-publish'
-    id 'org.jetbrains.gradle.plugin.idea-ext' version '1.1.8'
-    id 'com.gtnewhorizons.retrofuturagradle' version '1.4.0'
-    id 'net.darkhax.curseforgegradle' version '1.1.24' apply false
+    id 'org.jetbrains.gradle.plugin.idea-ext' version '1.1.9'
+    id 'com.gtnewhorizons.retrofuturagradle' version '1.4.1'
+    id 'net.darkhax.curseforgegradle' version '1.1.25' apply false
     id 'com.modrinth.minotaur' version '2.8.7' apply false
-    id 'com.diffplug.spotless' version '6.13.0' apply false
-    id 'com.palantir.git-version' version '3.0.0' apply false
+    //id 'com.diffplug.spotless' version '6.13.0' apply false
+    id 'com.palantir.git-version' version '3.1.0' apply false
     id 'com.github.johnrengelman.shadow' version '8.1.1' apply false
-    id 'org.jetbrains.kotlin.jvm' version '1.8.0' apply false
-    id 'org.jetbrains.kotlin.kapt' version '1.8.0' apply false
-    id 'com.google.devtools.ksp' version '1.8.0-1.0.9' apply false
+    //id 'org.jetbrains.kotlin.jvm' version '1.8.0' apply false
+    //id 'org.jetbrains.kotlin.kapt' version '1.8.0' apply false
+    //id 'com.google.devtools.ksp' version '1.8.0-1.0.9' apply false
     id 'de.undercouch.download' version '5.6.0' apply false
 }
 
@@ -101,6 +101,7 @@ propertyDefaultIfUnset("enableModernJavaSyntax", false)
 propertyDefaultIfUnset("enableSpotless", false)
 propertyDefaultIfUnset("enableJUnit", false)
 propertyDefaultIfUnsetWithEnvVar("deploymentDebug", false, "DEPLOYMENT_DEBUG")
+propertyDefaultIfUnset("useNewerKotlinVersion", false)
 
 
 // Project property assertions
@@ -251,7 +252,11 @@ if (enableSpotless.toBoolean()) {
             target 'src/*/kotlin/**/*.kt'
 
             toggleOffOn()
-            ktfmt('0.39')
+            if (useNewerKotlinVersion.toBoolean()) {
+                ktfmt('0.53')
+            } else {
+                ktfmt('0.44')
+            }
 
             trimTrailingWhitespace()
             indentWithSpaces(4)
@@ -474,7 +479,7 @@ repositories {
             url 'https://maven.gtceu.com'
         }
     }
-    if (usesMixins.toBoolean() || forceEnableMixins.toBoolean()) {
+    if (usesMixins.toBoolean() || forceEnableMixins.toBoolean() || useNewerKotlinVersion.toBoolean()) {
         // need to add this here even if we did not above
         if (!includeWellKnownRepositories.toBoolean()) {
             maven {
@@ -518,7 +523,7 @@ configurations {
     testRuntimeClasspath.extendsFrom(runtimeOnlyNonPublishable)
 }
 
-String mixinProviderSpec = 'zone.rong:mixinbooter:9.1'
+String mixinProviderSpec = 'zone.rong:mixinbooter:10.1'
 dependencies {
     if (usesMixins.toBoolean()) {
         annotationProcessor 'org.ow2.asm:asm-debug-all:5.2'
@@ -540,8 +545,8 @@ dependencies {
     }
 
     if (enableJUnit.toBoolean()) {
-        testImplementation 'org.hamcrest:hamcrest:2.2'
-        testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
+        testImplementation 'org.hamcrest:hamcrest:3.0'
+        testImplementation 'org.junit.jupiter:junit-jupiter:5.11.3'
         testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     }
 
@@ -563,9 +568,13 @@ dependencies {
         testCompileOnly "me.eigenraven.java8unsupported:java-8-unsupported-shim:1.0.0"
     }
 
-    compileOnlyApi 'org.jetbrains:annotations:24.1.0'
-    annotationProcessor 'org.jetbrains:annotations:24.1.0'
-    patchedMinecraft('net.minecraft:launchwrapper:1.17.2') {
+    if (useNewerKotlinVersion.toBoolean()) {
+        implementation 'io.github.chaosunity.forgelin:Forgelin-Continuous:2.0.21.0'
+    }
+
+    compileOnlyApi 'org.jetbrains:annotations:26.0.1'
+    annotationProcessor 'org.jetbrains:annotations:26.0.1'
+    patchedMinecraft('net.minecraft:launchwrapper:1.17.4') {
         transitive = false
     }
 
@@ -575,7 +584,7 @@ dependencies {
 
     if (includeCommonDevEnvMods.toBoolean()) {
         if (!(modId.equals('jei'))) {
-            implementation 'mezz.jei:jei_1.12.2:4.16.1.302'
+            implementation 'mezz.jei:jei_1.12.2:4.16.1.1013'
         }
         if (!(modId.equals('theoneprobe'))) {
             //noinspection DependencyNotationArgument
