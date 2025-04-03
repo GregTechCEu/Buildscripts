@@ -50,6 +50,8 @@ def out = services.get(StyledTextOutputFactory).create('an-output')
 
 
 // Project properties
+loadProjectProperties()
+
 
 // Required properties: we don't know how to handle these being missing gracefully
 checkPropertyExists("modName")
@@ -1483,6 +1485,18 @@ tasks.register('faq') {
 
 
 // Helpers
+def loadProjectProperties() {
+    def configFile = file("buildscript.properties")
+    if (configFile.exists()) {
+        configFile.withReader {
+            def prop = new Properties()
+            prop.load(it)
+            project.ext.config = new ConfigSlurper().parse(prop)
+        }
+    } else {
+        print("Failed to read from buildscript.properties, as it did not exist!")
+    }
+}
 
 def getDefaultArtifactGroup() {
     def lastIndex = project.modGroup.lastIndexOf('.')
