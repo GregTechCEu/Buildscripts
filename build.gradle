@@ -1477,7 +1477,7 @@ tasks.register('faq') {
                 "To add new dependencies to your project, place them in 'dependencies.gradle', NOT in 'build.gradle' as they would be replaced when the script updates.\n" +
                 "To add new repositories to your project, place them in 'repositories.gradle'.\n" +
                 "If you need additional gradle code to run, you can place it in a file named 'addon.gradle' (or either of the above, up to you for organization).\n\n" +
-                "If your build fails to recognize the syntax of newer Java versions, enable Jabel in your 'gradle.properties' under the option name 'enableModernJavaSyntax'.\n" +
+                "If your build fails to recognize the syntax of newer Java versions, enable Jabel in your 'buildscript.properties' under the option name 'enableModernJavaSyntax'.\n" +
                 "To see information on how to configure your IDE properly for Java 17, see https://github.com/GregTechCEu/Buildscripts/blob/master/docs/jabel.md\n\n" +
                 "Report any issues or feature requests you have for this build script to https://github.com/GregTechCEu/Buildscripts/issues\n")
     }
@@ -1509,7 +1509,7 @@ def getFile(String relativePath) {
 
 def checkPropertyExists(String propertyName) {
     if (!project.hasProperty(propertyName)) {
-        throw new GradleException("This project requires a property \"" + propertyName + "\"! Please add it your \"gradle.properties\". You can find all properties and their description here: https://github.com/GregTechCEu/Buildscripts/blob/main/gradle.properties")
+        throw new GradleException("This project requires a property \"" + propertyName + "\"! Please add it your \"buildscript.properties\" or \"gradle.properties\". You can find all properties and their description here: https://github.com/GregTechCEu/Buildscripts/blob/main/buildscript.properties and https://github.com/GregTechCEu/Buildscripts/blob/main/gradle.properties")
     }
 }
 
