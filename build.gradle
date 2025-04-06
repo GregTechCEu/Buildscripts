@@ -1491,7 +1491,9 @@ def loadProjectProperties() {
         configFile.withReader {
             def prop = new Properties()
             prop.load(it)
-            project.ext.config = new ConfigSlurper().parse(prop)
+            new ConfigSlurper().parse(prop).forEach { String k, def v ->
+                project.ext.setProperty(k, v)
+            }
         }
     } else {
         print("Failed to read from buildscript.properties, as it did not exist!")
