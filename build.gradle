@@ -870,12 +870,11 @@ if (enableJava17RunTasks.toBoolean()) {
 
     dependencies {
         if (modId != 'lwjgl3ify') {
-            java17Dependencies("io.github.twilightflower:lwjgl3ify:1.0.0"
+            java17Dependencies("io.github.twilightflower:lwjgl3ify:1.0.0")
             java17PatchDependencies("io.github.twilightflower:lwjgl3ify:1.0.0:forgePatches") {
             transitive = false
+            }
         }
-        }
-
     }
 
     ext.java17JvmArgs = [
