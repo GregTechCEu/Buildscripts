@@ -49,8 +49,8 @@ a custom file separate from `gradle.properties` for ease of use.
 - Copy the [`build.gradle`](https://github.com/GregTechCEu/Buildscripts/blob/master/build.gradle), [`dependencies.gradle`](https://github.com/GregTechCEu/Buildscripts/blob/master/dependencies.gradle), and [`repositories.gradle`](https://github.com/GregTechCEu/Buildscripts/blob/master/repositories.gradle) files from this zip to your project
 - Copy the [`settings.gradle`](https://github.com/GregTechCEu/Buildscripts/blob/master/settings.gradle) file from this zip to your project and replace your current one
 - Copy the [`buildscript.properties`](https://github.com/GregTechCEu/Buildscripts/blob/master/buildscript.properties) file from this zip to your project
-- Configure `buildscript.properties` for your mod
-- Create the file `gradle.properties` for your mod and create any property settings for use in custom gradle files - primarily `dependencies.gradle`
+- Configure `buildscript.properties` to adjust the `build.gradle` settings to suit your project
+- Configure `gradle.properties` to create any property settings for use in other gradle files - primarily `dependencies.gradle`
 - Move the necessary `dependencies` and/or `repositories` from `build.gradle.old` to the respective files (`dependencies.gradle`, `repositories.gradle`)
     - NOTE that if you enable the `includeWellKnownRepositories` option in `buildscript.properties`, this build script will automatically have the following Maven locations, meaning you don't need to add them yourself in `repositories.gradle`:
       1. Curse Maven
