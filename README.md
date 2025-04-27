@@ -30,14 +30,15 @@ This build script was heavily inspired by the build script created by GT New Hor
 - Automatic mod version detection from the latest git tag (or manually specified, if you prefer)
 - Updated Launchwrapper for better ASM/mixin debugging options
 
-And many more to come! And of course, all of these features are toggleable via an option in `gradle.properties`.
+And many more to come! And of course, all of these features are toggleable via an option in `buildscript.properties`,
+a custom file separate from `gradle.properties` for ease of use.
 
 ## How to Install (New Project)
 - Download the latest **starter.zip** release from [here](https://github.com/GregTechCEu/Buildscripts/releases) and extract into your project directory
 - Import into your IDE (we recommend IntelliJ IDEA, as it has the best support for modded Minecraft)
 - Choose a license for your code
 - Ensure your project is initialized in git. For example, you can run `git init; git commit --message "initial commit"`
-- Replace placeholder values, such as `gradle.properties`, package/class names for your `src/main` directory, etc.
+- Replace placeholder values, such as in `buildscript.properties`, package/class names for your `src/main` directory, etc.
 - Run `./gradlew setupDecompWorkspace`
 - Run `./gradlew updateBuildScript` to ensure that you are on the latest version
 - You are good to go! You can now run the `runClient` run configuration or run `./gradlew runClient` to launch the game
@@ -47,15 +48,16 @@ And many more to come! And of course, all of these features are toggleable via a
 - Rename your `build.gradle` file to `build.gradle.old`
 - Copy the [`build.gradle`](https://github.com/GregTechCEu/Buildscripts/blob/master/build.gradle), [`dependencies.gradle`](https://github.com/GregTechCEu/Buildscripts/blob/master/dependencies.gradle), and [`repositories.gradle`](https://github.com/GregTechCEu/Buildscripts/blob/master/repositories.gradle) files from this zip to your project
 - Copy the [`settings.gradle`](https://github.com/GregTechCEu/Buildscripts/blob/master/settings.gradle) file from this zip to your project and replace your current one
-- Copy all the options from the [`gradle.properties`](https://github.com/GregTechCEu/Buildscripts/blob/master/gradle.properties) file to your `gradle.properties` (or copy entirely if you did not have one). You can leave your existing options if you know you need them, otherwise they can likely be removed
-- Configure `gradle.properties` for your mod
+- Copy the [`buildscript.properties`](https://github.com/GregTechCEu/Buildscripts/blob/master/buildscript.properties) file from this zip to your project
+- Configure `buildscript.properties` to adjust the `build.gradle` settings to suit your project
+- Configure `gradle.properties` to create any property settings for use in other gradle files - primarily `dependencies.gradle`
 - Move the necessary `dependencies` and/or `repositories` from `build.gradle.old` to the respective files (`dependencies.gradle`, `repositories.gradle`)
-    - NOTE that if you enable the `includeWellKnownRepositories` option in `gradle.properties`, this build script will automatically have the following Maven locations, meaning you don't need to add them yourself in `repositories.gradle`:
+    - NOTE that if you enable the `includeWellKnownRepositories` option in `buildscript.properties`, this build script will automatically have the following Maven locations, meaning you don't need to add them yourself in `repositories.gradle`:
       1. Curse Maven
       2. Modrinth Maven
       3. BlameJared Maven
       4. CleanroomMC Maven
-    - NOTE that if you enable the `includeCommonDevEnvMods` option in `gradle.properties`, this build script will automatically have the following Mods, meaning you don't need to add them yourself in `dependencies.gradle`:
+    - NOTE that if you enable the `includeCommonDevEnvMods` option in `buildscript.properties`, this build script will automatically have the following Mods, meaning you don't need to add them yourself in `dependencies.gradle`:
       1. JEI
       2. The One Probe
 - Delete the `build.gradle.old` file
@@ -63,14 +65,15 @@ And many more to come! And of course, all of these features are toggleable via a
 
 ### Advanced
 - If your project was using Mixins, you may get a new mixin config file generated as `mixins.{modid}.json`, if yours was not named this way. Currently, you will have to move your Mixin config options to this newly generated file. If this behavior does not suit your needs, feel free to open an issue and start a discussion on different behavior
-- If your project was using environment variables for CI deployments, see the `gradle.properties` file's comments to view the environment variable names this script checks for
+- If your project was using environment variables for CI deployments, see the `buildscript.properties` file's comments to view the environment variable names this script checks for
 - If you have any additional build script code that you need to be applied, create an `addon.gradle` file and put it there
 - If your project has no dependencies, you can safely delete the `repositories.gradle` and `dependencies.gradle` files, they are optional
 
 ## How to Use
 ### Files
 - `build.gradle`: This file is automatically updated, and as a result should not be modified by the user directly
-- `gradle.properties`: Contains all the user configuration for the build script
+- `buildscript.properties`: Contains all the user configuration for the build script
+- `gradle.properties`: Contains all the user configuration for general gradle files
 - `settings.gradle`: This file contains some basic setup of the build script. It is currently not versioned, so it is safe to add to, though should not have things removed from it
 ### Custom Files
 Any of these files can optionally be either `.gradle` (Groovy), or `.gradle.kts` (Kotlin DSL).
