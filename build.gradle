@@ -372,6 +372,9 @@ minecraft {
 
     // JVM arguments
     extraRunJvmArguments.add("-ea:${modGroup}")
+
+    // enable JLine Terminal since idea_rt.jar is no longer added to the classpath
+    extraRunJvmArguments.add('-Dterminal.jline=true')
     if (usesMixins.toBoolean()) {
         extraRunJvmArguments.addAll([
             '-Dmixin.hotSwap=true',
