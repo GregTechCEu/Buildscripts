@@ -1011,7 +1011,7 @@ abstract class RunHotswappableMinecraftTask extends RunMinecraftTask {
 
         if (project.usesMixins.toBoolean()) {
             this.extraJvmArgs.addAll(project.provider(() -> {
-                def mixinCfg = project.configurations.detachedConfiguration(project.dependencies.create(mixinProviderSpec))
+                def mixinCfg = project.configurations.detachedConfiguration(project.dependencies.create(project.mixinProviderSpec))
                 mixinCfg.canBeConsumed = false
                 mixinCfg.canBeResolved = true
                 mixinCfg.transitive = false
