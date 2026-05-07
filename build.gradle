@@ -248,7 +248,7 @@ if (enableSpotless.toBoolean()) {
             removeUnusedImports()
             endWithNewline()
             //noinspection GroovyAssignabilityCheck
-            eclipse('4.19.0').configFile(formatFile)
+            eclipse('4.37').configFile(formatFile)
         }
         kotlin {
             target 'src/*/kotlin/**/*.kt'
