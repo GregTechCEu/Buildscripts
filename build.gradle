@@ -97,6 +97,8 @@ propertyDefaultIfUnset("modrinthRelations", "")
 propertyDefaultIfUnsetWithEnvVar("curseForgeProjectId", "", "CURSEFORGE_PROJECT_ID")
 propertyDefaultIfUnset("curseForgeRelations", "")
 propertyDefaultIfUnsetWithEnvVar("releaseType", "release", "RELEASE_TYPE")
+propertyDefaultIfUnset("clientEnvironment", true)
+propertyDefaultIfUnset("serverEnvironment", true)
 propertyDefaultIfUnset("generateDefaultChangelog", false)
 propertyDefaultIfUnset("customMavenPublishUrl", "")
 propertyDefaultIfUnset("mavenArtifactGroup", getDefaultArtifactGroup())
@@ -1207,6 +1209,12 @@ if (cfApiKey.isPresent() || deploymentDebug.toBoolean()) {
             mainFile.addModLoader 'Forge'
             mainFile.addJavaVersion "Java 8"
             mainFile.addGameVersion minecraftVersion
+            if (serverEnvironment.toBoolean()) {
+                mainFile.addEnvironment "Server"
+            }
+            if (clientEnvironment.toBoolean()) {
+                mainFile.addEnvironment "Client"
+            }
 
             if (curseForgeRelations.size() != 0) {
                 String[] deps = curseForgeRelations.split(';')
